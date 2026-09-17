@@ -7,7 +7,7 @@ Project-URL: Repository, https://github.com/iTzFaisal/oc-cc-proxy
 Requires-Python: >=3.12
 Description-Content-Type: text/markdown
 Requires-Dist: httpx>=0.28.1
-Requires-Dist: litellm[proxy]>=1.83.14
+Requires-Dist: litellm[proxy]>=1.101.0
 Requires-Dist: python-dotenv>=1.2.2
 Requires-Dist: pyyaml>=6.0.3
 
@@ -49,6 +49,13 @@ Add equivalent environment values to your Claude Code user-scope `settings.json`
 - `OPENCODE_GO_API_KEY`: required if `--api-key` is not provided.
 - `OC_PROXY_HOST`: optional host override, defaults to `127.0.0.1`.
 - `OC_PROXY_PORT`: optional port override, defaults to `4000`.
+
+### Session affinity
+
+OpenCode Go requires a stable `x-opencode-session` header (one ID per conversation) so it can optimize prompt caching. The proxy sends this header automatically on every upstream request:
+
+- If Claude Code provides a session ID (for example `x-opencode-session`, `x-litellm-session-id`, or `x-claude-code-session-id`), the proxy forwards it unchanged.
+- Otherwise the proxy derives a deterministic ID from the conversation's opening messages, so every turn in the same conversation shares the same ID.
 
 ## Local Development Setup
 

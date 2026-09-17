@@ -53,14 +53,14 @@ def _patch_litellm_empty_stream_choices() -> None:
             return False
         return original_should_start(self, chunk)
 
-    def patched_translate(self: Any, response: Any, current_content_block_index: int) -> dict[str, Any]:
+    def patched_translate(self: Any, response: Any, current_content_block_index: int, *args: Any, **kwargs: Any) -> dict[str, Any]:
         if _has_empty_choices(response):
             return {
                 "type": "content_block_delta",
                 "index": current_content_block_index,
                 "delta": {"type": "text_delta", "text": ""},
             }
-        return original_translate(self, response, current_content_block_index)
+        return original_translate(self, response, current_content_block_index, *args, **kwargs)
 
     def patched_raise_on_repetition(self: Any) -> None:
         if len(self.chunks) < 2:

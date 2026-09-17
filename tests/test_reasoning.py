@@ -90,6 +90,19 @@ def test_litellm_empty_choices_patch_is_installed() -> None:
     assert AnthropicStreamWrapper(None, "minimax-m2.7")._should_start_new_content_block(chunk) is False
 
 
+def test_litellm_translate_patch_accepts_new_kwargs() -> None:
+    from litellm.llms.anthropic.experimental_pass_through.adapters.transformation import (
+        LiteLLMAnthropicMessagesAdapter,
+    )
+
+    chunk = type("Chunk", (), {"choices": []})()
+    result = LiteLLMAnthropicMessagesAdapter().translate_streaming_openai_response_to_anthropic(
+        chunk, 0, applied_edits=[]
+    )
+
+    assert result == {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": ""}}
+
+
 def test_litellm_repetition_patch_ignores_empty_choices() -> None:
     from litellm.litellm_core_utils.streaming_handler import CustomStreamWrapper
 
